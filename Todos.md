@@ -14,14 +14,23 @@
 
 - [ ] Step 1 - Allow user to play on different maps (images)
 
-## Frontend Todos
+## Custom Todos
 
+### Pre-Planning Todos
+
+- [ ] Complete initial version of `Planning.md` document
+- [ ] Convert notes from `Planning.md` into small to-do tasks on this document
+
+### Frontend Todos
+
+- [ ] Create the React boilerplate app with vite as a subdirectory of the root folder
 - [ ] TODO
 
-## Backend Todos
+### Backend Todos
 
+- [ ] Create the Rails boilerplate app with vite as a subdirectory of the root folder
 - [ ] TODO
 
-## Misc Todos
+### Misc Todos
 
 - [ ] TODO
