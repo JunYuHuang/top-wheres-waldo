@@ -103,6 +103,7 @@
   - Read: TODO
   - Update: TODO
   - DELETE: TODO
+- how to make backend automatically use the database seed to update the database during deployment?
 
 ## Backend Data Models
 
@@ -172,7 +173,6 @@ objects: [
   }
 ]
 foundObjectIds: [ objectIdN ]
-foundObjectPositions: [ [objectNPositionX, objectNPositionY] ]
 started_at:datetime || null
 finished_at:datetime || null
 id:string (session id created by server)
@@ -193,36 +193,6 @@ POST    /games
 PUT     /games/:id
 DELETE  /games/:id
 ```
-
-## Backend (Action) Controllers
-
-### `GET /games/:id`
-
-#### Case 1 - get the current state of the game
-
-Request Params (both query and body):
-
-- TODO
-
-Processing Work:
-
-- TODO
-
-Response (JSON):
-
-- TODO
-
-### `POST /games`
-
-- TODO
-
-### `PUT /games/:id`
-
-- TODO
-
-### `DELETE /games/:id`
-
-- TODO
 
 ## Specs
 
@@ -250,7 +220,7 @@ Definitions:
 - Assumes the following backend duties:
   - Hosts the photo(s) (NOT in the database).
   - Has a `Photo` model for interacting with the `photos` table in the database.
-  - Has an API route GET `/api/v1/photos/:id` that returns JSON data as an object that includes the path to where the photo is hosted on the server for each photo.
+  - Has an API route GET `/photos/:id` that returns JSON data as an object that includes the path to where the photo is hosted on the server for each photo.
 
 Constraints:
 
@@ -273,7 +243,7 @@ Definitions:
     - If the game is over (`isPlaying` is true),
       - do nothing and return from the function.
     - Hide the target box and its options UI elements.
-    - `res` = response from GET `/api/v1/photos/:photo_id/objects/?id=:id&pos_x=:pos_x&pos_y=:pos_y` as an array of objects
+    - `res` = response from GET `/photos/:photo_id/objects/?id=:id&pos_x=:pos_x&pos_y=:pos_y` as an array of objects
     - If the position did NOT identify an object in the photo (`res` is not an array of size 1),
       - do nothing and return from the function.
     - If the player found this object before (`id` is in `foundObjectIds`),
@@ -287,7 +257,7 @@ Definitions:
 - Assumes the following backend duties:
   - Hosts the thumbnail images for each object in each photo (NOT in the database).
   - Has an `Object` model for interacting with the `objects` table in the database.
-  - Has an API route GET `/api/v1/photos/:photo_id/objects` that returns JSON data in the form of an array of objects / hashmaps given certain query string parameters.
+  - Has an API route GET `/photos/:photo_id/objects` that returns JSON data in the form of an array of objects / hashmaps given certain query string parameters.
     - Should return an array of size 1 if the player submitted a valid position that correctly identifies an object in the photo.
     - Returns all rows in the `objects` table that meet the following filters:
       - `object.id` == `params[:id]`
@@ -318,3 +288,80 @@ Definitions:
 Constraints:
 
 - TODO
+
+### `Version 1.0` Spec
+
+Spec written from the ground up.
+
+#### Overview
+
+- The game is compromised of two separate apps, `Client` and `Server` that talk to each other via HTTP.
+- `Client` is a frontend web client app built in React hosted somewhere.
+- `Server` is a backend web server app built in Rails hosted somewhere.
+- The player playing the game interfaces with and uses `Client` directly.
+- `Client` interfaces with and uses `Server` directly.
+- `Server` is the authoritative source for any game session being played by some `Client`.
+- `Client` is a dumb client that displays data that mostly comes from `Server` and makes requests to `Server` on behalf of the player.
+- `Client` manages local state not relevant to `Server` (e.g. the last position targeted / clicked by the player).
+- Each interaction that `Client` and `Server` have with each other is an `Event`.
+- `Client` sends request `Event`'s to `Server` when:
+  - To create a new game session.
+  - To process input from the player.
+  - To shut down the game session after the player completes the game or abandons it.
+- `Server` sends response `Event`'s to `Client` when:
+  - `Client` needs assets to load and display a new game.
+  - `Client` needs an updated game state in response to player input.
+  - `Client` needs confirmation for a completed action.
+- `Server` tracks and manages the game state for any `Client` via an HTTP session stored on `Server`'s cache (memory / RAM of the machine that hosts `Server`).
+
+#### `Client` Definition
+
+Duties:
+
+- Displays the title of the game.
+- Displays brief instructions for playing the game.
+- Displays a list of all the objects / characters in the photo with visual signs for each that indicate if the object has been found by the player or not.
+- Displays the photo.
+- Displays and moves a target box with a list of button options over the photo when the player clicks on some position in the photo.
+- Visually hides the target box with its list of button options after the player clicks on any of the button options.
+- After the player correctly identifies a position in the photo associated with an object, `Client` creates and positions a visual flag element centered on that position over the photo.
+- Displays a timer that shows the current elapsed time since the game started (i.e. after the photo finishes loading).
+- Visually updates the timer every second while the game session is not over.
+- Pauses or stops the timer after the player finds all objects in the photo.
+- Displays a table list of the top few scores for players who have beaten the game for the photo being played on.
+- Displays a pop-up modal form that lets the player submit their name and score (run time) after the player beats the game in the current photo.
+- Closes the pop-up modal form after the player submits their score.
+
+Structure:
+
+- SPA (Single-Page Application) with 1 page.
+- No client-side routing needed.
+
+State:
+
+- TODO
+- `foundObjectPositions`: array of `pos` arrays where `pos` is an array of size 2 that represent the position of an found object as `(x, y)` where `x` and `y` are positions in the rendered photo on the client
+
+#### `Server` Definition
+
+Duties:
+
+- Hosts photo images.
+- Hosts object images.
+- Serves photo data.
+- Serves object data.
+- Serves and manages game (session) data.
+- Manages score records in database.
+
+Structure:
+
+- API-only backend server app.
+- Only has Models and Controllers.
+- Manages sessions / cookies for unauthenticated players.
+
+State:
+
+- `game` session in cache per client / player.
+- `photos` database table records
+- `objects` database table records
+- `scores` database table records
