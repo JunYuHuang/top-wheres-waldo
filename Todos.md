@@ -26,7 +26,6 @@
 - [ ] Create the Rails boilerplate app `server` folder in root folder
   - [ ] Create with API only template
   - [ ] Install session package / library dependencies
-- [ ] Update `.gitignore` file in root folder to include content in `server` folder to ignore
 - [ ] Create the following image files in `./server/assets/images/`:
   - [ ] `photo_1.png` (image of the Where's Waldo map photo)
   - [ ] `object_waldo.png` (image of the character Waldo)
