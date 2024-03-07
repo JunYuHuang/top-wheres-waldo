@@ -21,16 +21,31 @@
 - [ ] Complete initial version of `Planning.md` document
 - [ ] Convert notes from `Planning.md` into small to-do tasks on this document
 
-### Frontend Todos
-
-- [ ] Create the React boilerplate app with vite as a subdirectory of the root folder
-- [ ] TODO
-
 ### Backend Todos
 
-- [ ] Create the Rails boilerplate app with vite as a subdirectory of the root folder
-- [ ] TODO
-
-### Misc Todos
-
-- [ ] TODO
+- [ ] Create the Rails boilerplate app `server` folder in root folder
+  - [ ] Create with API only template
+  - [ ] Install session package / library dependencies
+- [ ] Update `.gitignore` file in root folder to include content in `server` folder to ignore
+- [ ] Create the following image files in `./server/assets/images/`:
+  - [ ] `photo_1.png` (image of the Where's Waldo map photo)
+  - [ ] `object_waldo.png` (image of the character Waldo)
+  - [ ] `object_wenda.png` (image of the character Wenda)
+  - [ ] `object_woof.png` (image of the character Woof)
+- [ ] Create the `Photo` Model
+- [ ] Create the `photos` database migration
+- [ ] Run the `photos` database migration
+- [ ] Create the `Photo` routes
+- [ ] Create the `Photo` Controller
+- [ ] Create the `Object` Model
+- [ ] Create the `objects` database migration
+- [ ] Run the `objects` database migration
+- [ ] Create the `Object` routes
+- [ ] Create the `Object` Controller
+- [ ] Create the `Game` Controller
+- [ ] Create the `Game` routes
+- [ ] Create the `Score` Model
+- [ ] Create the `scores` database migration
+- [ ] Run the `scores` database migration
+- [ ] Create the `Score` routes
+- [ ] Create the `Score` Controller
