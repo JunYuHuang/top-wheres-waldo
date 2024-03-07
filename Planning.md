@@ -78,7 +78,19 @@
       - server updates that session's `started_at` field to the one sent by the client
   - once client loads the photo, the client keeps track and updates is own timer every second equal to the current time's timestamp - the timestamp recorded when the photo loaded on the client
   - sequence: stopping the timer
-    - TODO
+    - client sends a request to check if the player's clicked position matches an object's area in the photo
+      - request payload includes timestamp of when player clicked the position
+    - server gets the request
+    - server processes the request and finds that the player's position is a match
+    - server updates the client's session data's `finished_at` field
+    - server checks if the client's session data indicates that the player has found all objects in the photo
+      - answer is yes
+    - server sends a response to the client to indicate that the client has completed the game for the given photo
+- how to design backend API to accommodate non-standard game events?
+  - model all game HTTP requests RESTfully with the `/games` resource
+  - TODO: design RESTful API design spec below
+  - for game id use the session id Rails creates for each client
+  - find out how to get session id on an API-only Rails backend
 - how to use session storage on Rails backend that only serves as an API-only app to generate session id's for a separate front-end only client app?
   - something something HTTP session token?
 - questions about sessions
@@ -86,6 +98,11 @@
   - how does the previous question apply for a monolith Rails app vs a Rails API-only backend that communicates with a React front-end?
   - how to update the session for a guest user after the frontend client sends some HTTP request? (e.g. user found a character in the photo)
   - how to dispose of the session if the guest user leaves before completing the game?
+- how to do CRUD ops on sessions / cookies in Rails?
+  - Create: TODO
+  - Read: TODO
+  - Update: TODO
+  - DELETE: TODO
 
 ## Backend Data Models
 
@@ -94,6 +111,7 @@ Models:
 - Photo
 - Object
 - Score
+- Game (no database table)
 
 ### `Photo` Model
 
@@ -138,41 +156,73 @@ updated_at:datetime
 belongs_to photo
 ```
 
+### `Game` Model
+
+```
+is_over:boolean [present]
+photo: {
+  id:int [present]
+  image_url:string [present]
+}
+objects: [
+  {
+    id:int [present]
+    name:string [present]
+    image_url:string [present]
+  }
+]
+foundObjectIds: [ objectIdN ]
+foundObjectPositions: [ [objectNPositionX, objectNPositionY] ]
+started_at:datetime || null
+finished_at:datetime || null
+id:string (session id created by server)
+```
+
+Notes:
+
+- This model has no associated database table.
+- This model is a hash stored in the session / cookie per client.
+
 ## Backend Routes
 
+```bash
+GET     /scores
+POST    /scores
+GET     /games/:id
+POST    /games
+PUT     /games/:id
+DELETE  /games/:id
 ```
-GET     /api/v1/photos/:id
-GET     /api/v1/photos/:photo_id/objects (with query string params)
-GET     /api/v1/scores
-POST    /api/v1/scores
-```
 
-## Session / Cookie Data
+## Backend (Action) Controllers
 
-```js
-{
-  /* when the player started the game in unix epoch time (in MS) */
-  "started_at": 1709669721060,
+### `GET /games/:id`
 
-  /*
-     When the player finished the game in unix epoch time (in MS).
-     May be null while player is still in-game.
-  */
-  "finished_at": 1709669868750,
+#### Case 1 - get the current state of the game
 
-  /* id of the photo that the player is playing on */
-  "photo_id": 1,
+Request Params (both query and body):
 
-  /*
-     Dict that maps the string name of each object in the photo to a boolean that indicates if the player found the object or not yet.
-  */
-  "is_object_found": {
-    "waldo": false,
-    "woof": true,
-    "wenda": false
-  }
-}
-```
+- TODO
+
+Processing Work:
+
+- TODO
+
+Response (JSON):
+
+- TODO
+
+### `POST /games`
+
+- TODO
+
+### `PUT /games/:id`
+
+- TODO
+
+### `DELETE /games/:id`
+
+- TODO
 
 ## Specs
 
