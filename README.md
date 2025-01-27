@@ -4,8 +4,6 @@
 
 This is a web game implementation of the classic children's puzzle book series Where's Waldo. Players need to find all the missing characters in a given photo. Once all characters are found in a photo, the player can submit their score or run time to the game leaderboard.
 
-[Play the game hosted on GitHub Pages](https://junyuhuang.github.io/top-wheres-waldo-client/).
-
 Links:
 
 - [Frontend client application](https://github.com/JunYuHuang/top-wheres-waldo-client)
